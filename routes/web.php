@@ -3,6 +3,8 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\QrShowController;
 use App\Services\UserTokenValidator;
+use App\Http\Controllers\PlaceAuthController;
+
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -33,6 +35,18 @@ Route::middleware('auth')->group(function () {
     Route::view('/token/invalid', 'qrcode.invalid')->name('token.invalid');
 
 });
+
+//
+Route::prefix('place')->group(function () {
+    Route::get('login', [PlaceAuthController::class, 'showLoginForm'])->name('place.login.form');
+    Route::post('login', [PlaceAuthController::class, 'login'])->name('place.login');
+    Route::post('logout', [PlaceAuthController::class, 'logout'])->name('place.logout');
+
+    Route::middleware('auth:place')->group(function () {
+        Route::get('/dashboard', fn() => 'ようこそ、店舗ダッシュボードへ！');
+    });
+});
+
 
 
 require __DIR__.'/auth.php';
