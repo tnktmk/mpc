@@ -21,9 +21,9 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     //QRコード表示
     Route::get('/show',[QrShowController::class,'show'])->name('qr.show');
-
+    //QRコード読み取り
     Route::get('/qrcode/scan', fn() => view('qrcode.qr_scan'));
-
+    //QRコードのトークンをバリデイト
     Route::get('/token/check/{token}', function ($token, UserTokenValidator $validator) {
         if ($validator->isValid($token)) {
             return redirect()->route('token.valid'); // 有効な場合
@@ -31,12 +31,13 @@ Route::middleware('auth')->group(function () {
             return redirect()->route('token.invalid'); // 無効な場合
         }
         }); 
+    //validate後のページ
     Route::view('/token/valid', 'qrcode.valid')->name('token.valid');
     Route::view('/token/invalid', 'qrcode.invalid')->name('token.invalid');
 
 });
 
-//
+//Placeの認証
 Route::prefix('place')->group(function () {
     Route::get('login', [PlaceAuthController::class, 'showLoginForm'])->name('place.login.form');
     Route::post('login', [PlaceAuthController::class, 'login'])->name('place.login');
