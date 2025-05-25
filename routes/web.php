@@ -1,5 +1,6 @@
 <?php
 
+use App\Events\SendResult;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\QrShowController;
 use App\Services\UserTokenValidator;
@@ -26,6 +27,7 @@ Route::middleware('auth')->group(function () {
     //QRコードのトークンをバリデイト
     Route::get('/token/check/{token}', function ($token, UserTokenValidator $validator) {
         if ($validator->isValid($token)) {
+            broadcast(new SendResult($token));
             return redirect()->route('token.valid'); // 有効な場合
         } else {
             return redirect()->route('token.invalid'); // 無効な場合
